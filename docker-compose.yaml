@@ -3,6 +3,7 @@ version: '3'
 services:
     bot:
         build: .
+        container_name: mazzabot
         env_file:
             -   .env
         depends_on:
@@ -10,6 +11,7 @@ services:
         restart: always
     db:
         image: postgres:16
+        container_name: postres
         restart: always
         env_file:
             -   .env
