@@ -88,7 +88,7 @@ async def ad_decide(callback_query: CallbackQuery, bot: Bot, state: FSMContext, 
         await request.delete_table()
 
     elif callback_query.data == 'cancel_ad':
-        callback_query.message.edit_text(f'Отменил рассылку', reply_markup=None)
+        callback_query.message.answer(f'Отменил рассылку', reply_markup=None)
 
     await state.clear()
     await callback_query.answer()
