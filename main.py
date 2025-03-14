@@ -25,7 +25,7 @@ async def start_bot(bot: Bot, req: Request):
     await set_commands(bot)
     await req.bot_messages()
 
-    start_text = req.get_start_text()
+    start_text = await req.get_start_text()
 
     storage_key = StorageKey(chat_id=-1, user_id=-1, bot_id=bot.id)
 
