@@ -22,7 +22,7 @@ storage = MemoryStorage()
 dp = Dispatcher(storage=storage)
 
 
-async def start_bot(bot: Bot, req: Request):
+async def start_bot(req: Request):
     await set_commands(bot)
     await req.bot_messages_init()
 
