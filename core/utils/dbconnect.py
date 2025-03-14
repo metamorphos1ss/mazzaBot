@@ -41,7 +41,7 @@ class Request:
         await self.connector.execute(query)
 
         query = (f"INSERT INTO bot_messages (command, message)"
-                 f"SELECT '/start', ''"
+                 f"SELECT '/start', 'priv'"
                  f"WHERE NOT EXISTS (SELECT 1 FROM bot_messages WHERE command='/start'); ")
         await self.connector.execute(query)
 
