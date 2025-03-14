@@ -40,9 +40,11 @@ class Request:
         query = f"CREATE TABLE IF NOT EXISTS bot_messages (id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY, command TEXT NOT NULL UNIQUE, message TEXT NOT NULL);"
         await self.connector.execute(query)
 
-        query = (f"INSERT INTO bot_messages (command, message)"
-                 f"SELECT '/start', 'priv'"
-                 f"WHERE NOT EXISTS (SELECT 1 FROM bot_messages WHERE command='/start'); ")
+        query = """
+        INSERT INTO bot_messages (command, message)
+        VALUES ('/start', 'priv')
+        ON CONFLICT (command) DO UPDATE SET message = EXCLUDED.message;
+"""
         await self.connector.execute(query)
 
 #TODO переименовать эту переменную
