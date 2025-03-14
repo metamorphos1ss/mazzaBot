@@ -1,4 +1,5 @@
 import asyncio
+from functools import partial
 import logging
 import asyncpg
 from aiogram import Bot, Dispatcher, F
@@ -14,9 +15,9 @@ from core.utils.commands import set_commands
 from core.middleware.dbMiddleware import DbSession
 from core.handlers import ad
 
-async def start_bot(bot: Bot, reqeust: Request):
+async def start_bot(bot: Bot, req: Request):
     await set_commands(bot)
-    await reqeust.bot_messages()
+    await req.bot_messages()
 
 
 async def create_pool():
@@ -27,6 +28,7 @@ async def start():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s - %(filename)s:%(lineno)d')
     bot = Bot(token=config.token)
     pool_connect = await create_pool()
+    req=Request(pool_connect)
     dp = Dispatcher()
     dp.update.middleware.register(DbSession(pool_connect))
     dp.message.register(ad.get_ad, Command('ad'), F.chat.id == config.admin_id)
@@ -38,7 +40,7 @@ async def start():
     ad_list = AdList(bot, pool_connect)
 
     dp.message.register(get_start, Command('start'))
-    dp.startup.register(start_bot)
+    dp.startup.register(partial(start_bot, bot=bot, req=req))
 
     dp.message.register(userdb_init)
 
