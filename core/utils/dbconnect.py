@@ -49,8 +49,12 @@ class Request:
 
     async def bot_messages_update(self, command: str, text: str):
         logging.info(f'обновляю команду {command}')
-        query = f"INSERT INTO bot_messages (command, message) VALUES ('{command}', '{text}')"
-        await self.connector.execute(query)
+        query = query = """
+            INSERT INTO bot_messages (command, message) 
+            VALUES ($1, $2)
+            ON CONFLICT (command) DO UPDATE SET message = EXCLUDED.message;
+    """
+        await self.connector.execute(query, command, text)
 
 
 #TODO переименовать эту переменную
