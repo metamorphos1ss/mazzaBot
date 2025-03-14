@@ -37,7 +37,7 @@ class Request:
 
     async def bot_messages_init(self):
         logging.info('я хотя бы вызываюсь')
-        query = f"CREATE TABLE IF NOT EXISTS bot_messages (id bigint PRIMARY KEY, command TEXT NOT NULL UNIQUE, message TEXT NOT NULL);"
+        query = f"CREATE TABLE IF NOT EXISTS bot_messages (command TEXT NOT NULL UNIQUE, message TEXT NOT NULL);"
         await self.connector.execute(query)
 
         query = """
