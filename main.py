@@ -4,7 +4,8 @@ import logging
 import asyncpg
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command
-from aiohttp import request
+from aiogram.fsm.storage.base import StorageKey
+from aiogram.fsm.storage.memory import MemoryStorage
 
 from core.handlers.basic import get_start, userdb_init
 from core.utils.ad_list import AdList
@@ -15,9 +16,20 @@ from core.utils.commands import set_commands
 from core.middleware.dbMiddleware import DbSession
 from core.handlers import ad
 
+bot = Bot(token=config.token)
+storage = MemoryStorage()
+dp = Dispatcher(storage=storage)
+
+
 async def start_bot(bot: Bot, req: Request):
     await set_commands(bot)
     await req.bot_messages()
+
+    start_text = req.get_start_text()
+
+    storage_key = storagekey(chat_id=-1, user_id=-1, bot_id=bot.id)
+
+    await dp.storage.set_data(key=storage_key, data={"start_text": start_text})
 
 
 async def create_pool():
@@ -26,10 +38,8 @@ async def create_pool():
 
 async def start():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s - %(filename)s:%(lineno)d')
-    bot = Bot(token=config.token)
     pool_connect = await create_pool()
     req=Request(pool_connect)
-    dp = Dispatcher()
     dp.update.middleware.register(DbSession(pool_connect))
     dp.message.register(ad.get_ad, Command('ad'), F.chat.id == config.admin_id)
     dp.message.register(ad.get_message, Steps.get_message, F.chat.id == config.admin_id)
@@ -39,7 +49,7 @@ async def start():
     dp.callback_query.register(ad.ad_decide, F.data.in_(['confirm_ad', 'cancel_ad']))
     ad_list = AdList(bot, pool_connect)
 
-    dp.message.register(get_start, Command('start'))
+    dp.message.register(partial(get_start, storage=dp.storage), Command('start'))
     dp.startup.register(partial(start_bot, bot=bot, req=req))
 
     dp.message.register(userdb_init)

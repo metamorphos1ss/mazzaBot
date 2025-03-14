@@ -44,3 +44,9 @@ class Request:
                  f"SELECT '/start', ''"
                  f"WHERE NOT EXISTS (SELECT 1 FROM bot_messages WHERE command='/start'); ")
         await self.connector.execute(query)
+
+#TODO переименовать эту переменную
+    async def get_start_text(self):
+        query = "SELECT message FROM bot_messages WHERE command='/start';"
+        result = await self.connector.fetchval(query)
+        return result if result else "default text"
