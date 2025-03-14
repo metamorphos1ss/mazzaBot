@@ -38,7 +38,7 @@ async def start():
     ad_list = AdList(bot, pool_connect)
 
     dp.message.register(get_start, Command('start'))
-    dp.startup.register(lambda: start_bot(bot, reqeust=Request(pool_connect)))
+    dp.startup.register(lambda: asyncio.create_task(start_bot(bot, reqeust=Request(pool_connect))))
 
     dp.message.register(userdb_init)
 
