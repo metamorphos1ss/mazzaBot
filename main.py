@@ -14,9 +14,9 @@ from core.utils.commands import set_commands
 from core.middleware.dbMiddleware import DbSession
 from core.handlers import ad
 
-async def start_bot(bot: Bot, req: Request):
+async def start_bot(bot: Bot, reqeust: Request):
     await set_commands(bot)
-    await req.bot_messages()
+    await reqeust.bot_messages()
 
 
 async def create_pool():
@@ -38,7 +38,7 @@ async def start():
     ad_list = AdList(bot, pool_connect)
 
     dp.message.register(get_start, Command('start'))
-    dp.startup.register(start_bot)
+    dp.startup.register(lambda: start_bot(bot, reqeust=Request(pool_connect)))
 
     dp.message.register(userdb_init)
 
