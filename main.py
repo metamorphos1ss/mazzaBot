@@ -59,6 +59,7 @@ async def start():
 
 
     dp.message.register(partial(get_start, storage=dp.storage), Command('start'))
+    dp.message.register(start_bot, Command('reload_commands'), F.chat.id == config.admin_id)
     dp.startup.register(partial(start_bot, bot=bot, req=req))
 
     dp.message.register(userdb_init)

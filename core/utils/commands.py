@@ -11,7 +11,11 @@ async def set_commands(bot: Bot):
         )
     ]
 
-    admin_commands = user_commands + [BotCommand(command="ad", description='Сделать рекламный пост')] + [BotCommand(command="commands", description='Изменить текстовые команды')]
+    admin_commands = user_commands + [
+        BotCommand(command="ad", description="Сделать рекламный пост"),
+        BotCommand(command="commands", description="Изменить текстовые команды"),
+        BotCommand(command="reload_commands", description="Перезагрузить команды")
+    ]
 
 
     await bot.set_my_commands(admin_commands, BotCommandScopeChat(chat_id=config.admin_id))
