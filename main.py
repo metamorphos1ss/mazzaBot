@@ -3,18 +3,20 @@ import logging
 import asyncpg
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command
+from aiohttp import request
 
 from core.handlers.basic import get_start, userdb_init
 from core.utils.ad_list import AdList
 from core.utils.ad_state import Steps
+from core.utils.dbconnect import Request
 from core.utils.config import config
 from core.utils.commands import set_commands
 from core.middleware.dbMiddleware import DbSession
 from core.handlers import ad
 
-async def start_bot(bot: Bot):
+async def start_bot(bot: Bot, req: Request):
     await set_commands(bot)
-    logging.info('БОТ ЗАПУЩЕН')
+    await req.bot_messages()
 
 
 async def create_pool():

@@ -33,3 +33,13 @@ class Request:
     async def delete_table(self):
         query = f"DROP TABLE users_ad;"
         await self.connector.execute(query)
+
+
+    async def bot_messages(self):
+        query = f"CREATE TABLE IF NOT EXISTS bot_messages (id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY, command TEXT NOT NULL UNIQUE, message TEXT NOT NULL);"
+        await self.connector.execute(query)
+
+        query = (f"INSERT INTO bot_messages (command, message)"
+                 f"SELECT '/start', ''"
+                 f"WHERE NOT EXISTS (SELECT 1 FROM bot_messages WHERE command='/start'); ")
+        await self.connector.execute(query)
