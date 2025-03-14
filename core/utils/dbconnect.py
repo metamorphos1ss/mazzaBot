@@ -53,8 +53,8 @@ class Request:
         self.connector.execute(query)
 
 
-# #TODO переименовать эту переменную
-#     async def get_start_text(self):
-#         query = "SELECT message FROM bot_messages WHERE command='/start';"
-#         result = await self.connector.fetchval(query)
-#         return result if result else "default text"
+#TODO переименовать эту переменную
+    async def get_start_text(self):
+        query = "SELECT message FROM bot_messages WHERE command='/start';"
+        result = await self.connector.fetchval(query)
+        return result if result else "default text"
