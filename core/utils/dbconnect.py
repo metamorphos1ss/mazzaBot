@@ -41,10 +41,10 @@ class Request:
         await self.connector.execute(query)
 
         query = """
-        INSERT INTO bot_messages (command, message)
-        VALUES ('/start', 'priv')
-        ON CONFLICT (command) DO UPDATE SET message = EXCLUDED.message;
-"""
+    INSERT INTO bot_messages (command, message)
+    VALUES ('/start', 'priv')
+    ON CONFLICT (command) DO NOTHING;
+    """
         await self.connector.execute(query)
 
 #TODO переименовать эту переменную
