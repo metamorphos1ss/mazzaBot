@@ -11,7 +11,7 @@ from core.utils.ad_state import Steps
 from core.utils.dbconnect import Request
 
 
-async def get_ad(message: Message, command: CommandObject, state: FSMContext):
+async def get_ad(message: Message, state: FSMContext):
     await message.answer(f'Начинаю создавать пост.\r\n\r\n'
                          f'Отправь рекламный пост (в дальнейшем можно будет добавить под него кнопку-ссылку)')
 

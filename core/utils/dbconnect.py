@@ -35,7 +35,7 @@ class Request:
         await self.connector.execute(query)
 
 
-    async def bot_messages(self):
+    async def bot_messages_init(self):
         logging.info('я хотя бы вызываюсь')
         query = f"CREATE TABLE IF NOT EXISTS bot_messages (id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY, command TEXT NOT NULL UNIQUE, message TEXT NOT NULL);"
         await self.connector.execute(query)
@@ -47,8 +47,14 @@ class Request:
     """
         await self.connector.execute(query)
 
-#TODO переименовать эту переменную
-    async def get_start_text(self):
-        query = "SELECT message FROM bot_messages WHERE command='/start';"
-        result = await self.connector.fetchval(query)
-        return result if result else "default text"
+    async def bot_messages_update(self, command: str, text: str):
+        logging.info(f'обновляю команду {command}')
+        query = f"INSERT INTO bot_messages (command, message) VALUES ({command}, '{text}')"
+        self.connector.execute(query)
+
+
+# #TODO переименовать эту переменную
+#     async def get_start_text(self):
+#         query = "SELECT message FROM bot_messages WHERE command='/start';"
+#         result = await self.connector.fetchval(query)
+#         return result if result else "default text"

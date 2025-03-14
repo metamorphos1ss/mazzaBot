@@ -10,11 +10,12 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from core.handlers.basic import get_start, userdb_init
 from core.utils.ad_list import AdList
 from core.utils.ad_state import Steps
+from core.utils.commands_state import Commands
 from core.utils.dbconnect import Request
 from core.utils.config import config
 from core.utils.commands import set_commands
 from core.middleware.dbMiddleware import DbSession
-from core.handlers import ad
+from core.handlers import ad, info
 
 bot = Bot(token=config.token)
 storage = MemoryStorage()
@@ -23,7 +24,7 @@ dp = Dispatcher(storage=storage)
 
 async def start_bot(bot: Bot, req: Request):
     await set_commands(bot)
-    await req.bot_messages()
+    await req.bot_messages_init()
 
     start_text = await req.get_start_text()
 
@@ -41,6 +42,8 @@ async def start():
     pool_connect = await create_pool()
     req=Request(pool_connect)
     dp.update.middleware.register(DbSession(pool_connect))
+
+
     dp.message.register(ad.get_ad, Command('ad'), F.chat.id == config.admin_id)
     dp.message.register(ad.get_message, Steps.get_message, F.chat.id == config.admin_id)
     dp.callback_query.register(ad.button, Steps.button)
@@ -48,6 +51,12 @@ async def start():
     dp.message.register(ad.get_url_button, Steps.get_url_button)
     dp.callback_query.register(ad.ad_decide, F.data.in_(['confirm_ad', 'cancel_ad']))
     ad_list = AdList(bot, pool_connect)
+
+    dp.message.register(info.get_command, Command('commands'), F.chat.id == config.admin_id)
+    dp.message.register(info.get_command_message, Commands.get_command, F.chat.id == config.admin_id)
+    dp.message.register(info.get_text, Commands.get_text, F.chat.id == config.admin_id)
+    dp.callback_query.register(info.cmd_decide, F.data.in_(['confirm_cmd', 'cancel_cmd']))
+
 
     dp.message.register(partial(get_start, storage=dp.storage), Command('start'))
     dp.startup.register(partial(start_bot, bot=bot, req=req))
