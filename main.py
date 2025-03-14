@@ -27,7 +27,7 @@ async def start_bot(bot: Bot, req: Request):
 
     start_text = req.get_start_text()
 
-    storage_key = storagekey(chat_id=-1, user_id=-1, bot_id=bot.id)
+    storage_key = StorageKey(chat_id=-1, user_id=-1, bot_id=bot.id)
 
     await dp.storage.set_data(key=storage_key, data={"start_text": start_text})
 
